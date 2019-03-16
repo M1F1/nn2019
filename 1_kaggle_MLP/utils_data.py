@@ -37,28 +37,28 @@ def stratified_split(data_dir: str):
     y_train, y_test = y[train_index], y[test_index]
     dimensions = ','.join(list(map(str, list(range(X_train.shape[1])))))
 
-    np.savetxt(os.path.join(data_dir, "train_splitted_data.csv"),
+    np.savetxt(os.path.join(data_dir, "split_train_data.csv"),
                X_train,
                delimiter=",",
                header=dimensions,
                comments='',
                fmt='%1.4f'
                )
-    np.savetxt(os.path.join(data_dir, "train_splitted_labels.csv"),
+    np.savetxt(os.path.join(data_dir, "split_train_labels.csv"),
                y_train,
                delimiter=",",
                header='label',
                comments='',
                fmt='%d'
                )
-    np.savetxt(os.path.join(data_dir, "test_splitted_data.csv"),
+    np.savetxt(os.path.join(data_dir, "split_val_data.csv"),
                X_test,
                delimiter=",",
                header=dimensions,
                comments='',
                fmt='%1.4f'
                )
-    np.savetxt(os.path.join(data_dir, "test_splitted_labels.csv"),
+    np.savetxt(os.path.join(data_dir, "split_val_labels.csv"),
                y_test,
                delimiter=",",
                header='label',
@@ -90,16 +90,32 @@ class Project1Dataset(Dataset):
     # __ys = []
 
     def __init__(self, data_dir: str, which: str):
-        assert which in ['train', 'test']
-        self.__xs = np.loadtxt(fname=os.path.join(data_dir, F'{which}_splitted_data.csv'), delimiter=',', skiprows=1)
-        self.__ys = np.loadtxt(fname=os.path.join(data_dir, F'{which}_splitted_labels.csv'), delimiter=',', skiprows=1)
+        assert which in ['split_train', 'split_val', 'train', 'test']
+        self.dataset_type = which
+        if which == 'test':
+            self.__xs = np.loadtxt(fname=os.path.join(data_dir, 'test_data.csv'), delimiter=',', skiprows=1)
+            self.__ys = None
+        else:
+            self.__xs = np.loadtxt(fname=os.path.join(data_dir, F'{which}_data.csv'), delimiter=',', skiprows=1)
+            self.__ys = np.loadtxt(fname=os.path.join(data_dir, F'{which}_labels.csv'), delimiter=',', skiprows=1)
+
 
     def __getitem__(self, index):
-        x = torch.from_numpy(self.__xs[index])
-        y = torch.from_numpy(self.__ys[index])
+        x = torch.from_numpy(np.asarray(self.__xs[index])).float()
+        if self.__ys is not None:
+            y = torch.from_numpy(np.asarray(self.__ys[index])).long()
+        else:
+            y = torch.zeros(x.shape[0])
         return x, y
 
     # Override to give PyTorch size of dataset
     def __len__(self):
         return len(self.__xs)
+
+    def __repr__(self):
+        fmt_str = 'Dataset: ' + self.__class__.__name__ + '\n'
+        fmt_str += 'Dataset type: ' + self.dataset_type + '\n'
+        fmt_str += 'Dimensions : {}'.format(self.__xs.shape)
+        return fmt_str
+
 
