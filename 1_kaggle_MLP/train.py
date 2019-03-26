@@ -4,10 +4,12 @@ import torch
 from models import BaseLine
 import utils_data
 import time, datetime
+from torch.optim.lr_scheduler import StepLR
 
+torch.manual_seed(42)
 # some hyperparams
-batch_size: int = 64
-epoch: int = 3
+batch_size: int = 32
+epoch: int = 30
 lr: float = 0.01
 momentum: float = 0.9
 
@@ -25,8 +27,9 @@ all_data_loader = torch.utils.data.DataLoader(all_data_dataset, batch_size=batch
 
 # initialize the model
 model: BaseLine = BaseLine(input_size=342,
-                           hidden_size_1=500,
-                           hidden_size_2=100,
+                           hidden_size_1=1024, # 700
+                           hidden_size_2=512, # 500
+                           hidden_size_3=256, # 100
                            output_size=10
                           )
 
@@ -34,7 +37,10 @@ model: BaseLine = BaseLine(input_size=342,
 optimizer: torch.optim.Optimizer = SGD(params=model.parameters(),
                                        lr=lr,
                                        momentum=momentum)
+scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+    optimizer, patience=8, verbose=True)
 
+start = time.time()
 for e in range(epoch):
     for i, (x, y) in enumerate(train_loader):
 
@@ -55,6 +61,7 @@ for e in range(epoch):
 
     # at the end of an epoch run evaluation on the test set
     with torch.no_grad():
+        model.eval()
         # initialize the number of correct predictions
         correct: int = 0
         for i, (x, y) in enumerate(val_loader):
@@ -65,8 +72,11 @@ for e in range(epoch):
             correct += int(torch.sum(pred == y))
 
         print(f"\nTest accuracy: {correct / len(val_dataset)}")
+    scheduler.step(correct / len(val_dataset))
 # TODO: train on all data
+duration = time.time() - start
 ts = time.time()
 st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d_%H:%M:%S.pt')
+print(F'training_time last: {duration}')
 
-torch.save(model, F'models/{st}' )
+torch.save(model, F'models/{st}')

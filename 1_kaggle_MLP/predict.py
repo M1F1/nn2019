@@ -5,7 +5,7 @@ import csv
 import os
 from pdb import set_trace as st
 if __name__ == '__main__':
-    model = torch.load('models/new.pt')
+    model = torch.load('models/2019-03-25_20:06:46.pt')
     model.eval()
     batch_size = 64
     data_dir = 'data'
@@ -24,7 +24,7 @@ if __name__ == '__main__':
             # st()
             print(F'Predicting: {i}', flush=False)
             all_predictions[i*batch_size:(i+1)*batch_size] = pred
-    with open(os.path.join(data_dir, "sample_submission_new_1.csv"), 'w') as f:
+    with open(os.path.join(data_dir, "new_sub.csv"), 'w') as f:
         writer = csv.writer(f, delimiter=',')
         writer.writerow(['id', 'label'])
         writer.writerows(enumerate(all_predictions))
