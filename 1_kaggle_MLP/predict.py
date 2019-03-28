@@ -5,7 +5,7 @@ import csv
 import os
 from pdb import set_trace as st
 if __name__ == '__main__':
-    model = torch.load('models/2019-03-25_20:06:46.pt')
+    model = torch.load('models/2019-03-28_11:04:41.pt')
     model.eval()
     batch_size = 64
     data_dir = 'data'

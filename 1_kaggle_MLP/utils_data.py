@@ -31,7 +31,7 @@ def stratified_split(data_dir: str):
     X = np.loadtxt(fname=os.path.join(data_dir, 'train_data.csv'), delimiter=',', skiprows=1)
     y = np.loadtxt(fname=os.path.join(data_dir, 'train_labels.csv'), delimiter=',', skiprows=1)
     print('Data loaded')
-    sss = StratifiedShuffleSplit(n_splits=1, test_size=0.01, random_state=42)
+    sss = StratifiedShuffleSplit(n_splits=1, test_size=0.1, random_state=42)
     train_index, test_index = next(sss.split(X, y))
     X_train, X_test = X[train_index], X[test_index]
     y_train, y_test = y[train_index], y[test_index]

@@ -18,17 +18,19 @@ train_dataset = utils_data.Project1Dataset(data_dir='data',
                                            which='split_train')
 val_dataset = utils_data.Project1Dataset(data_dir='data',
                                          which='split_val')
+print(len(val_dataset))
 
 all_data_dataset = utils_data.Project1Dataset(data_dir='data',
                                               which='train')
 train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size)
 val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size)
+len(val_loader)
 all_data_loader = torch.utils.data.DataLoader(all_data_dataset, batch_size=batch_size)
 
 # initialize the model
 model: BaseLine = BaseLine(input_size=342,
-                           hidden_size_1=1024, # 700
-                           hidden_size_2=512, # 500
+                           hidden_size_1=2048, # 700
+                           hidden_size_2=1024, # 500
                            hidden_size_3=256, # 100
                            output_size=10
                           )
@@ -37,6 +39,7 @@ model: BaseLine = BaseLine(input_size=342,
 optimizer: torch.optim.Optimizer = SGD(params=model.parameters(),
                                        lr=lr,
                                        momentum=momentum)
+                                       #weight_decay=0.01)
 scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
     optimizer, patience=8, verbose=True)
 
