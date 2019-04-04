@@ -38,8 +38,8 @@ model: BaseLine = BaseLine(input_size=342,
 # initialize the optimizer
 optimizer: torch.optim.Optimizer = SGD(params=model.parameters(),
                                        lr=lr,
-                                       momentum=momentum)
-                                       #weight_decay=0.01)
+                                       momentum=momentum,
+                                       weight_decay=0.0001)
 scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
     optimizer, patience=8, verbose=True)
 
