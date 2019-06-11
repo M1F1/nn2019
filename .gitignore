@@ -7,4 +7,6 @@
 3_kaggle_denoising/data/
 3_kaggle_denoising/.idea
 3_kaggle_denoising/.ipynb_checkpoints/
+3_kaggle_denoising/*.tar.gz
+3_kaggle_denoising/*.csv
 
